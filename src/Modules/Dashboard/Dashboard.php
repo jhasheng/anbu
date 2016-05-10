@@ -1,9 +1,9 @@
 <?php
 
-namespace Anbu\Modules\Dashboard;
+namespace Purple\Anbu\Modules\Dashboard;
 
-use StdClass;
-use Anbu\Modules\Module;
+use Purple\Anbu\Purple;
+use Purple\Anbu\Modules\Module;
 use Illuminate\Foundation\Application;
 
 class Dashboard extends Module
@@ -56,25 +56,15 @@ class Dashboard extends Module
      */
     public function live()
     {
-        // Initialize widget array.
         $this->data['widgets'] = [];
-
-        // Resolve profiler.
-        $profiler = $this->app->make('Anbu\\Profiler');
-
-        // Iterate modules.
+        $profiler = $this->app->make(Purple::class);
         foreach ($profiler->getModules() as $module) {
-
-            // If the module has a widget.
             if ($module->hasWidget()) {
-
-                // Create a new module object.
-                $widget = new StdClass;
+                $widget = new \stdClass();
                 $widget->name   = $module->getName();
                 $widget->badge  = $module->getBadge();
                 $widget->view   = $this->renderWidget($module);
 
-                // Add to widgets array.
                 $this->data['widgets'][] = $widget;
             }
         }

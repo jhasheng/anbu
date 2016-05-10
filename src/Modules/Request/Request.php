@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Modules\Request;
+namespace Purple\Anbu\Modules\Request;
 
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Request extends Module
 {

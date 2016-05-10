@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Modules\Timers;
+namespace Purple\Anbu\Modules\Timers;
 
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Timers extends Module
 {

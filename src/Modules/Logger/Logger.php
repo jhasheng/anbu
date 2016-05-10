@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Modules\Logger;
+namespace Purple\Anbu\Modules\Logger;
 
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Logger extends Module
 {
@@ -56,13 +56,10 @@ class Logger extends Module
      *
      * @return void
      */
-    public function logEventFired($type, $message)
+    public function logEventFired()
     {
-        // Add log to buffer
-        $this->data['logs'][] = [
-            'type'    => $type,
-            'message' => $message,
-        ];
+        // Add log to buffer.
+        $this->data['logs'][] = func_get_args();
     }
 
     /**

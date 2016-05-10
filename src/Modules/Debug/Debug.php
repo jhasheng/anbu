@@ -1,9 +1,8 @@
 <?php
 
-namespace Anbu\Modules\Debug;
+namespace Purple\Anbu\Modules\Debug;
 
-use Anbu\Models\Storage;
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Debug extends Module
 {

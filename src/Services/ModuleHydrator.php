@@ -1,47 +1,37 @@
 <?php
 
-namespace Anbu\Services;
+namespace Purple\Anbu\Services;
 
-use Anbu\Profiler;
-use Anbu\Models\Storage;
+use Purple\Anbu\Purple;
+use Purple\Anbu\Models\Storage;
 
 class ModuleHydrator
 {
     /**
      * Profiler instance.
-     *
-     * @var Profiler
+     * @var Purple
      */
-    protected $profiler;
+    protected $purple;
 
     /**
-     * Inject the anbu profiler.
-     *
-     * @param Profiler $profiler
+     * Inject the anbu purple.
+     * @param Purple $purple
      */
-    public function __construct(Profiler $profiler)
+    public function __construct(Purple $purple)
     {
-        // Set the profiler instance.
-        $this->profiler = $profiler;
+        $this->purple = $purple;
     }
 
     /**
      * Hydrate modules with data from storage record.
-     *
      * @param  Storage $storage
      * @return void
      */
     public function hydrate(Storage $storage)
     {
-        // Extract the module data from storage.
         $modules = $storage->getData();
-
-        // Iterate module data.
         foreach ($modules as $slug => $module) {
-
-            // Get live module from profiler.
-            $m = $this->profiler->getModule($slug);
-
+            $m = $this->purple->getModule($slug);
             // Set module data from storage.
             $m->setData(array_get($module, 'data'));
             $m->setGlobal(array_get($module, 'global'));

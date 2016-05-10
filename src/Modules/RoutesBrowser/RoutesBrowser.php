@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Modules\RoutesBrowser;
+namespace Purple\Anbu\Modules\RoutesBrowser;
 
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class RoutesBrowser extends Module
 {
@@ -57,10 +57,9 @@ class RoutesBrowser extends Module
 
             // Add a new route to the data array.
             $this->data['routes'][] = [
-                'methods' => $route->getMethods(),
-                'name'    => $route->getName(),
-                'path'    => $this->highlightParams($route->getPath()),
-                'action'  => $route->getActionName(),
+                $route->getMethods(),                               // HTTP Verb
+                $this->highlightParams($route->getPath()),          // URI
+                $route->getActionName()                             // Action
             ];
         }
 
@@ -69,10 +68,9 @@ class RoutesBrowser extends Module
 
         // Set the current route information.
         $this->data['current'] = [
-            'methods' => [$request->method()],
-            'name'    => $current->getName(),
-            'path'    => $this->highlightParams($current->getPath()),
-            'action'  => $current->getActionName(),
+            $request->method(),                               // HTTP Verb
+            $this->highlightParams($current->getPath()),      // URI
+            $current->getActionName()                         // Action
         ];
 
         // Set badge to number of registered routes.

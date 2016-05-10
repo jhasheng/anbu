@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Repositories;
+namespace Purple\Anbu\Repositories;
 
-use Anbu\Models\Storage;
+use Purple\Anbu\Models\Storage;
 
 class DatabaseRepository implements Repository
 {
@@ -10,7 +10,7 @@ class DatabaseRepository implements Repository
      * Get a storage model.
      *
      * @param  string $key
-     * @return Anbu\Models\Storage
+     * @return \Purple\Anbu\Models\Storage
      */
     public function get($key = null)
     {
@@ -44,21 +44,7 @@ class DatabaseRepository implements Repository
      */
     public function all()
     {
-        // Get items from database.
-        $items = Storage::orderBy('id', 'desc')->get();
-
-        // Record buffer.
-        $records = [];
-
-        // Iterate collection.
-        foreach ($items as $item) {
-
-            // Add record to array.
-            $records[] = $item;
-        }
-
-        // Return a list of storage objects.
-        return $records;
+        return Storage::paginate(20);
     }
 
     /**
@@ -70,9 +56,8 @@ class DatabaseRepository implements Repository
     {
         // Iterate models.
         Storage::get()->each(function ($model) {
-
             // Delete model.
-            $model->delete();
+            $model->truncate();
         });
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Anbu\Modules;
+namespace Purple\Anbu\Modules;
 
 use ReflectionClass;
 use Illuminate\Foundation\Application;
@@ -99,7 +99,7 @@ abstract class Module
     /**
      * Laravel application instance for the current request.
      *
-     * @var Illuminate\Foundation\Application
+     * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
 

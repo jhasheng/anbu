@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Modules\Info;
+namespace Purple\Anbu\Modules\Info;
 
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Info extends Module
 {

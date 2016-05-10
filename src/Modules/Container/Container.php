@@ -1,9 +1,9 @@
 <?php
 
-namespace Anbu\Modules\Container;
+namespace Purple\Anbu\Modules\Container;
 
 use Exception;
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Container extends Module
 {
@@ -92,10 +92,10 @@ class Container extends Module
 
                 // Create a new row.
                 $rows[] = [
-                    'id'          => $identifier,
-                    'description' => $this->getServiceDescription($service),
-                    'resolved'    => $resolved,
-                    'time'        => $this->calculateServiceResolutionTime($identifier)
+                    $identifier,
+                    $this->getServiceDescription($service),
+                    $resolved,
+                    $this->calculateServiceResolutionTime($identifier)
                 ];
             }
             catch (Exception $exception) {

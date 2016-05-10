@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Modules\Events;
+namespace Purple\Anbu\Modules\Events;
 
-use Anbu\Modules\Module;
+use Purple\Anbu\Modules\Module;
 
 class Events extends Module
 {
@@ -63,8 +63,8 @@ class Events extends Module
 
         // Add the event to the data array.
         $this->data['events'][] = [
-            'name' => $event->firing(),
-            'time' => microtime(true) - LARAVEL_START
+            $event->firing(),
+            microtime(true) - LARAVEL_START
         ];
     }
 

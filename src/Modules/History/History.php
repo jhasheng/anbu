@@ -1,10 +1,10 @@
 <?php
 
-namespace Anbu\Modules\History;
+namespace Purple\Anbu\Modules\History;
 
-use Anbu\Modules\Module;
-use Anbu\Repositories\Repository;
-use Illuminate\Foundation\Application;
+use Illuminate\Pagination\PaginationServiceProvider;
+use Purple\Anbu\Modules\Module;
+use Purple\Anbu\Repositories\Repository;
 
 class History extends Module
 {
@@ -76,13 +76,9 @@ class History extends Module
     {
         // Bind all requests to data array.
         $history = $this->repository->all();
-
         // Get pagination component.
-        $paginator = $this->app->make('paginator');
-
         // Create paginator.
-        $this->data['history'] = $paginator->make($history, count($history), 10);
-
+        $this->data['history'] = $history;
         // Set badge to count of storage records.
         $this->badge = count($this->data['history']);
     }

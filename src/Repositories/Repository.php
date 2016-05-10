@@ -1,8 +1,8 @@
 <?php
 
-namespace Anbu\Repositories;
+namespace Purple\Anbu\Repositories;
 
-use Anbu\Models\Storage;
+use Purple\Anbu\Models\Storage;
 
 interface Repository
 {
@@ -10,7 +10,7 @@ interface Repository
      * Get a storage model.
      *
      * @param  string $key
-     * @return Anbu\Models\Storage
+     * @return Storage
      */
     public function get($key = null);
 
@@ -23,16 +23,16 @@ interface Repository
     public function put(Storage $storage);
 
     /**
-     * Get an array of all storage models.
-     *
-     * @return array
-     */
-    public function all();
-
-    /**
      * Clear all storage records.
      *
      * @return void
      */
     public function clear();
+
+    /**
+     * Get an array of all storage models.
+     *
+     * @return array
+     */
+    public function all();
 }

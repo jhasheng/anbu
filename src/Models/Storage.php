@@ -1,6 +1,6 @@
 <?php
 
-namespace Anbu\Models;
+namespace Purple\Anbu\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

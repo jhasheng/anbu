@@ -4,16 +4,14 @@
     <thead>
         <tr>
             <th>Query</th>
-            <th>Bindings</th>
             <th>Execution Time</th>
         </tr>
     </thead>
     <tbody>
         @foreach($queries as $query)
         <tr>
-            <td class="code">{{ $query['query'] }}</td>
-            <td class="code" style="word-break: break-all;">{{ json_encode($query['bindings']) }}</td>
-            <td>{{ number_format($query['time'], 2) }}ms</td>
+            <td class="code">{!! $query[0] !!}</td>
+            <td>{{ number_format($query[2], 5) }}ms</td>
         </tr>
         @endforeach
     </tbody>

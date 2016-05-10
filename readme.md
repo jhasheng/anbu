@@ -1,82 +1,86 @@
-[ ![Codeship Status for daylerees/anbu](https://www.codeship.io/projects/1657b700-1681-0132-af64-5ae52864a4c1/status?branch=master)](https://www.codeship.io/projects/33889)
+# Anbu Profiler for Laravel 5
 
-![Github Release](http://img.shields.io/github/release/daylerees/anbu.svg?style=flat-square)
-![Packagist License](http://img.shields.io/packagist/l/daylerees/anbu.svg?style=flat-square)
-![Packagist Downloads](http://img.shields.io/packagist/dt/daylerees/anbu.svg?style=flat-square)
-![Github Issues](http://img.shields.io/github/issues/daylerees/anbu.svg?style=flat-square)
-[![Tips](http://img.shields.io/gratipay/daylerees.svg?style=flat-square)](https://gratipay.com/daylerees)
-
-# Anbu Profiler for Laravel PHP
+Thanks [daylerees](https://github.com/daylerees)
 
 ![Anbu Profiler](https://raw.githubusercontent.com/daylerees/anbu/master/screenshot.png)
 
 ## Installation
 
-You'll need to add the package to the `require` section of your Laravel app `composer.json` file:
+添加以下内容到  `composer.json` -> `require` 
 
     "daylerees/anbu": "~1.0@alpha"
 
-First ensure that you have a database, and that it is configured with Laravel.
 
-Next add the following service provider to `app/config/app.php`:
+添加以下内容到文件 `app/config/app.php`:
 
-    'Anbu\ProfilerServiceProvider',
+    Purple\Anbu\ProfilerServiceProvider::class,
 
-Next use the `asset:publish` command for Artisan to publish profiler asset files.
+执行以下命令将会自动复制资源文件到指定目录，中括号中的参数将会强制覆盖已经存在的文件
 
-    php artisan asset:publish
+    php artisan vendor:publish --provider="Purple\Anbu\ProfilerServiceProvider" [--force]
 
-Finally, execute a page of your application and click on the Laravel icon in the lower left.
+安装结束，心情使用吧
 
 ## Timers
 
-If you want to use Anbu timers, you'll need to include the Facade in the `app/config/app.php` file:
+如需使用此功能，需要启用Facades，添加以下内容到 `app/config/app.php` 
 
-    'Anbu' => 'Anbu\Facades\Anbu',
+    'Anbu' => 'Purple\Anbu\Facades\Purple',
 
-Now you can create timers like this:
+使用方法如下
 
     Anbu::timers()->start('test');
     sleep(30); // Do something interesting here.
     Anbu::timers()->end('test', 'Completed doing something.');
 
-## Debug
+## Debug 
 
-When you use `dd()` you risk exposing information to the users of your application. Instead, use `ad()` to dump this data into the 'Debug' section of Anbu.
+如需使用此功能，使用 `ad()` 代替 `dd()` 
 
     ad('foo');
-
-
-## Hide & Disable
-
-First let me explain the two concepts.
-
-To **hide** is to eliminate the Laravel icon button from requests, so that it won't interfere with certain content types.
-
-To **disable** is to stop the profiler from storing the request, and displaying the button. Data for this request will be lost.
-
-You can **hide** the profiler using:
-
-    Anbu::hide();
-
-Or you can apply the `anbu.hide` filter as a `before` filter to any route or route group.
-
-You can **disable** the profiler using:
-
-    Anbu::disable();
-
-Or you can apply the `anbu.disable` filter as a `before` filter to any route or route group.
-
+   
 ## Problems?
 
-If a new module is added, then you might get an error when rendering a previous request.
+如何清除数据，清除数据采用  `truncate` ，将会重置自增主键
 
-Here's some things you can try if you have any problems. First you can try updating Anbu with:
+    php artisan purple:clear
 
-    composer update
 
-Secondly you can clear the previous requests with the following Artisan command.
+## Configuration
 
-    php artisan anbu:clear
+```
+return [
+    /**
+     * 启用分析工具
+     */
+    'disable' => env('PURPLE_ENABLE', false),
 
-Let me know about other issues!
+    /**
+     * 页面是否显示按钮
+     */
+    'display' => true,
+
+    /**
+     * 数据收集驱动类型
+     */
+    'repository' => 'Purple\Anbu\Repositories\DatabaseRepository',
+
+    /**
+     * 分析工具列表
+     */
+    'modules' => [
+        'Purple\Anbu\Modules\Dashboard\Dashboard',
+        'Purple\Anbu\Modules\RoutesBrowser\RoutesBrowser',
+        'Purple\Anbu\Modules\Request\Request',
+        'Purple\Anbu\Modules\QueryLogger\QueryLogger',
+        'Purple\Anbu\Modules\Logger\Logger',
+        'Purple\Anbu\Modules\Events\Events',
+        'Purple\Anbu\Modules\Debug\Debug',
+        'Purple\Anbu\Modules\Timers\Timers',
+        'Purple\Anbu\Modules\Info\Info',
+        'Purple\Anbu\Modules\History\History',
+//        'Anbu\Modules\Container\Container',
+    ],
+    
+];
+```
