@@ -6,9 +6,9 @@ Thanks [daylerees](https://github.com/daylerees)
 
 ## Installation
 
-添加以下内容到  `composer.json` -> `require` 
+执行以下命令进行安装
 
-    "daylerees/anbu": "~1.0@alpha"
+    composer require purple/anbu
 
 
 添加以下内容到文件 `app/config/app.php`:
@@ -19,7 +19,7 @@ Thanks [daylerees](https://github.com/daylerees)
 
     php artisan vendor:publish --provider="Purple\Anbu\ProfilerServiceProvider" [--force]
 
-安装结束，心情使用吧
+安装结束，尽情使用吧
 
 ## Timers
 
