@@ -2,7 +2,7 @@
 
 Thanks [daylerees](https://github.com/daylerees)
 
-![Anbu Profiler](https://raw.githubusercontent.com/daylerees/anbu/master/screenshot.png)
+![Anbu Profiler](https://raw.githubusercontent.com/jhasheng/anbu/master/snapshot.jpg)
 
 ## Installation
 
