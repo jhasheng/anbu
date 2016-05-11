@@ -10,7 +10,7 @@ return [
     /**
      * 启用分析工具
      */
-    'disable' => env('PURPLE_ENABLE', false),
+    'disable' => env('PURPLE_ENABLE', true),
 
     /**
      * 页面是否显示按钮

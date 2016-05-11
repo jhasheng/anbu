@@ -48,6 +48,8 @@ class Events extends Module
         $event = $this->app->make('events');
 
         // Bind handler for all events.
+        count($this->data['events']);
+        echo PHP_EOL;
         $event->listen('*', [$this, 'eventFired']);
     }
 

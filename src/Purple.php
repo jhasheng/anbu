@@ -9,6 +9,8 @@
 namespace Purple\Anbu;
 
 use Illuminate\Contracts\Foundation\Application;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Purple\Anbu\Exceptions\InvalidModuleException;
 use Purple\Anbu\Models\Storage;
 use Purple\Anbu\Modules\Module;
@@ -59,16 +61,16 @@ class Purple
      * @param $response
      * @return mixed
      */
-    public function executeAfterHook($request, $response)
+    public function executeAfterHook(Request $request, Response $response)
     {
         if (!$this->enabled) {
             return false;
         }
         $this->executeModuleAfterHooks($request, $response);
-        $this->storeModuleData();
+        $storage = $this->storeModuleData();
         $type = $response->headers->get('Content-Type');
         if (strstr($type, 'text/html') && $this->display) {
-//            echo view('anbu.button', compact('storage'));
+            $response->setContent($response->getContent() . view('anbu.button', compact('storage'))->render());
         }
     }
 

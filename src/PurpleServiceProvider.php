@@ -3,6 +3,7 @@
 namespace Purple\Anbu;
 
 use App\Http\Kernel;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Purple\Anbu\Command\ClearCommand;
@@ -13,6 +14,8 @@ class PurpleServiceProvider extends ServiceProvider
 {
 
     const DEFAULT_REPO = 'Purple\Anbu\Repositories\DatabaseRepository';
+
+    protected $defer = false;
 
     /**
      * Bootstrap the application services.
@@ -55,6 +58,7 @@ class PurpleServiceProvider extends ServiceProvider
         });
 
         $this->commands('command.purple.clear');
+        $this->installTable();
     }
 
     protected function registerRoutes()
@@ -99,5 +103,19 @@ class PurpleServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources' => base_path('public/anbu')
         ], 'asset');
+    }
+
+    protected function installTable()
+    {
+        $schema = $this->app['db']->connection()->getSchemaBuilder();
+        if (!$schema->hasTable('anbu')) {
+            $schema->create('anbu', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('uri')->nullable();
+                $table->float('time')->nullable();
+                $table->longText('storage');
+                $table->timestamps();
+            });
+        }
     }
 }
