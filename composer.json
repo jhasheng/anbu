@@ -1,6 +1,6 @@
 {
     "name": "purple/anbu",
-    "description": "debug profiler",
+    "description": "laravel-debug profiler",
     "license": "MIT",
     "authors": [
         {
@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/support": "5.2.*"
+        "laravel/framework": "5.2.*"
     },
     "autoload": {
         "psr-4": {
