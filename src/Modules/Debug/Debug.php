@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\Debug;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Debug extends Module
+class Debug extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -37,9 +39,9 @@ class Debug extends Module
     /**
      * Executed before the profiled request.
      *
-     * @return void
+     * @param Application $app
      */
-    public function before()
+    public function before(Application $app)
     {
         // Initialize debugs array.
         $this->data['debugs'] = [];
@@ -65,11 +67,10 @@ class Debug extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         // Set badge count to number of debug entries.
         $this->badge = count($this->data['debugs']);

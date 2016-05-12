@@ -2,7 +2,8 @@
 
 namespace Purple\Anbu\Repositories;
 
-use Purple\Anbu\Models\Storage;
+use Purple\Anbu\Storage\Storage;
+use Purple\Anbu\Storage\StorageInterface;
 
 interface Repository
 {
@@ -10,7 +11,7 @@ interface Repository
      * Get a storage model.
      *
      * @param  string $key
-     * @return Storage
+     * @return StorageInterface
      */
     public function get($key = null);
 

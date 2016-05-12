@@ -1,9 +1,10 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Administrator
- * Date: 16/5/9
- * Time: 14:05
+ * User: Krasen
+ * Date: 16/5/12
+ * Time: 18:01
+ * Email: jhasheng@hotmail.com
  */
 
 return [
@@ -20,7 +21,7 @@ return [
     /**
      * 数据收集驱动类型
      */
-    'repository' => 'Purple\Anbu\Repositories\DatabaseRepository',
+    'adapter' => 'mysql',
 
     /**
      * 分析工具列表

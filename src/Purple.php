@@ -1,27 +1,29 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: Administrator
- * Date: 16/5/9
- * Time: 14:41
+ * User: Krasen
+ * Date: 16/5/12
+ * Time: 18:01
+ * Email: jhasheng@hotmail.com
  */
 
 namespace Purple\Anbu;
 
-use Illuminate\Contracts\Foundation\Application;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Purple\Anbu\Exceptions\InvalidModuleException;
-use Purple\Anbu\Models\Storage;
-use Purple\Anbu\Modules\Module;
+use Purple\Anbu\Modules\ModuleInterface;
+use Purple\Anbu\Repositories\DatabaseRepository;
 use Purple\Anbu\Repositories\Repository;
+use Purple\Anbu\Storage\Adapter\MySQL;
+use Purple\Anbu\Storage\Storage;
+use Purple\Anbu\Storage\StorageInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Contracts\Foundation\Application;
 
 class Purple
 {
-    const VERSION = '1.0.0-alpha2';
+    const VERSION = '1.1.0-stable';
 
     /**
-     * @var $app Application
+     * @var $app \Illuminate\Foundation\Application
      */
     protected $app;
 
@@ -37,54 +39,25 @@ class Purple
     protected $display = true;
 
     protected $defaultModules = [
-        'Purple\Anbu\Modules\Dashboard\Dashboard',
-        'Purple\Anbu\Modules\RoutesBrowser\RoutesBrowser',
-        'Purple\Anbu\Modules\Request\Request',
-        'Purple\Anbu\Modules\QueryLogger\QueryLogger',
-        'Purple\Anbu\Modules\Logger\Logger',
-        'Purple\Anbu\Modules\Events\Events',
-        'Purple\Anbu\Modules\Debug\Debug',
-        'Purple\Anbu\Modules\Timers\Timers',
-        'Purple\Anbu\Modules\Info\Info',
-        'Purple\Anbu\Modules\History\History',
+        \Purple\Anbu\Modules\Dashboard\Dashboard::class,
+        \Purple\Anbu\Modules\RoutesBrowser\RoutesBrowser::class,
+        \Purple\Anbu\Modules\Request\Request::class,
+        \Purple\Anbu\Modules\History\History::class,
+        \Purple\Anbu\Modules\Info\Info::class,
+        \Purple\Anbu\Modules\Timers\Timers::class,
+        \Purple\Anbu\Modules\Debug\Debug::class,
+        \Purple\Anbu\Modules\Events\Events::class,
+        \Purple\Anbu\Modules\Logger\Logger::class,
+        \Purple\Anbu\Modules\QueryLogger\QueryLogger::class,
 //        'Anbu\Modules\Container\Container',
     ];
-    
-    public function __construct(Repository $repository)
+
+    public function __construct(Application $app, DatabaseRepository $repository)
     {
+        $this->app        = $app;
         $this->repository = $repository;
-    }
-
-    /**
-     * HTTP HOOK,进行HTTP分析和记录
-     * @param $request
-     * @param $response
-     * @return mixed
-     */
-    public function executeAfterHook(Request $request, Response $response)
-    {
-        if (!$this->enabled) {
-            return false;
-        }
-        $this->executeModuleAfterHooks($request, $response);
-        $storage = $this->storeModuleData();
-        $type = $response->headers->get('Content-Type');
-        if (strstr($type, 'text/html') && $this->display) {
-            $response->setContent($response->getContent() . view('anbu.button', compact('storage'))->render());
-        }
-    }
-
-    /**
-     * 注册profiler模块
-     * @param Application $app
-     */
-    public function registerModules(Application $app)
-    {
-        // Set application instance.
-        $this->app = $app;
-        $modules = $this->getModuleList();
-        foreach ($modules as $module) {
-            $this->registerModule($module);
+        foreach ($this->defaultModules as $module) {
+            array_push($this->modules, $app->make($module));
         }
     }
 
@@ -97,45 +70,68 @@ class Purple
     {
         return $this->modules;
     }
-    
-    public function disable()
+
+    public function isEnabled()
     {
-        $this->enabled = false;
+        return $this->enabled;
     }
 
-    /**
-     * 获取所有模块
-     * @return mixed
-     */
-    protected function getModuleList()
+    public function registerHook()
     {
-        $config = $this->app->make('config');
-        $modules = $config->get('anbu.modules', []);
-        return array_merge($modules, $this->getDefaultModules());
-    }
-
-    /**
-     * 注册profiler模块
-     * @param $module
-     */
-    protected function registerModule($module)
-    {
-        $module = $this->app->make($module);
-        if (!$module instanceof Module) {
-            throw new InvalidModuleException;
+        foreach ($this->modules as $module) {
+            $module->register($this->app);
         }
-        $module->setApplication($this->app);
-        $module->before();
-        $this->modules[$module->getSlug()] = $module;
     }
 
-    /**
-     * 获取默认模块
-     * @return array
-     */
-    protected function getDefaultModules()
+    public function beforeHook()
     {
-        return $this->defaultModules;
+        foreach ($this->modules as $module) {
+            $module->before($this->app);
+        }
+    }
+
+    public function afterHook(Response $response)
+    {
+        /**
+         * @var $module ModuleInterface
+         */
+        foreach ($this->modules as $module) {
+            $module->after($this->app, $response);
+        }
+        $this->endHook();
+        $this->displayButton($response, 0);
+    }
+
+    protected function endHook()
+    {
+        /**
+         * @var $storage StorageInterface
+         */
+        $storage = new Storage(new MySQL());
+        $storage->setUri($this->getCurrentRequestUri());
+        $storage->setTime(microtime(true) - LARAVEL_START);
+        /**
+         * @var $module ModuleInterface
+         */
+        $result = [];
+        foreach ($this->modules as $module) {
+            $result[$module->getName()] = $module->getData();
+        }
+        $storage->setStorage($result);
+        $this->repository->put($storage);
+    }
+
+    protected function displayButton(Response $response, $id)
+    {
+        $header = $response->headers;
+        if (strstr($header->get('Content-Type'), 'text/html')) {
+            $response->setContent($response->getContent() . $this->renderButtonHtml($id));
+        }
+    }
+
+    protected function renderButtonHtml($id)
+    {
+        return view('anbu.button', compact('id'))->render();
     }
 
     /**
@@ -147,49 +143,8 @@ class Purple
         /**
          * @var $current \Symfony\Component\Routing\Route
          */
-        $current = $this->app->make('router')->current();
-        $request = $this->app->make('request');
+        $current = $this->app['router']->current();
+        $request = $this->app['request'];
         return "{$request->method()} {$current->getPath()}";
     }
-
-    /**
-     * 分析单个模块
-     * @param $request
-     * @param $response
-     */
-    protected function executeModuleAfterHooks($request, $response)
-    {
-        foreach ($this->modules as $module) {
-            $module->after($request, $response);
-        }
-    }
-
-    /**
-     * 保存profiler信息
-     * @return Storage
-     */
-    protected function storeModuleData()
-    {
-        $storage = new Storage();
-        $storage->uri = $this->getCurrentRequestUri();
-        $storage->time = microtime(true) - LARAVEL_START;
-        $storage->storage = base64_encode(serialize($this->fetchStorage()));
-        $this->repository->put($storage);
-        return $storage;
-    }
-
-    /**
-     * 查询profiler信息
-     * @return array
-     */
-    protected function fetchStorage()
-    {
-        $storage = [];
-        foreach ($this->modules as $module) {
-            $slug = $module->getSlug();
-            $storage[$slug] = $module->getStorage();
-        }
-        return $storage;
-    }
-
 }

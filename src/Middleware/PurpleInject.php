@@ -4,6 +4,7 @@ namespace Purple\Anbu\Middleware;
 
 use Closure;
 use Purple\Anbu\Purple;
+use Symfony\Component\HttpFoundation\Request;
 
 class PurpleInject
 {
@@ -18,17 +19,20 @@ class PurpleInject
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  integer $disabled
+     * @param  Request $request
+     * @param  Closure $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $disabled = 0)
+    public function handle(Request $request, Closure $next)
     {
-        $response = $next($request);
         $purple = $this->purple;
-        if (intval($disabled)) $purple->disable();
-        $purple->executeAfterHook($request, $response);
+
+        if (!$purple->isEnabled()) {
+            return $next($request);
+        }
+        $purple->beforeHook();
+        $response = $next($request);
+        $purple->afterHook($response);
         return $response;
     }
 }

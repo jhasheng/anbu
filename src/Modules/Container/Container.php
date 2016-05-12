@@ -3,9 +3,11 @@
 namespace Purple\Anbu\Modules\Container;
 
 use Exception;
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Container extends Module
+class Container extends AbstractModule
 {
     /**
      * Format for displaying a scalar value.
@@ -48,11 +50,11 @@ class Container extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @internal param $Symfony /Component/HttpFoundation/Response $response
+     * @param Application $app
+     * @param Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         // Get all container bindings.
         $bindings = $this->app->getBindings();
@@ -188,5 +190,10 @@ class Container extends Module
     protected function serviceIsObject($service)
     {
         return gettype($service) === 'object';
+    }
+
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
     }
 }

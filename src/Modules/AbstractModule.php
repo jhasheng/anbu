@@ -5,144 +5,42 @@ namespace Purple\Anbu\Modules;
 use ReflectionClass;
 use Illuminate\Foundation\Application;
 
-abstract class Module
+abstract class AbstractModule implements ModuleInterface
 {
-    /**
-     * Menu URL format.
-     */
     const URL = 'anbu/%s/%s';
-
-    /**
-     * The display name of the module.
-     *
-     * @var string
-     */
     protected $name;
-
-    /**
-     * The short or URL friendly name of the module.
-     *
-     * @var string
-     */
     protected $slug;
-
-    /**
-     * A description of the modules purpose.
-     *
-     * @var string
-     */
     protected $description = 'No description present.';
-
-    /**
-     * Icon for side menu.
-     *
-     * @var string
-     */
-    protected $icon = 'cubes';
-
-    /**
-     * Get the template view for this module.
-     *
-     * @var string
-     */
-    protected $template = 'default';
-
-    /**
-     * Dashboard widget template.
-     *
-     * @var string
-     */
-    protected $widget = 'widget';
-
-    /**
-     * Count to show on menu.
-     *
-     * @var integer
-     */
-    protected $badge = 0;
-
-    /**
-     * Show this module in the side menu.
-     *
-     * @var boolean
-     */
-    protected $inMenu = true;
-
-    /**
-     * Does this module have a dashboard widget?
-     *
-     * @var boolean
-     */
-    protected $hasWidget = false;
-
-    /**
-     * An array of data that will be global to the profiler.
-     *
-     * @var array
-     */
-    protected $global = [];
-
-    /**
-     * An array of data for the rendering of this module.
-     *
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * An array of accessible assets.
-     *
-     * @var array
-     */
-    protected $assets = [];
-
-    /**
-     * Laravel application instance for the current request.
-     *
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
+    protected $icon        = 'cubes';
+    protected $template    = 'default';
+    protected $widget      = 'widget';
+    protected $badge       = 0;
+    protected $inMenu      = true;
+    protected $hasWidget   = false;
+    protected $global      = [];
+    protected $data        = [];
+    protected $assets      = [];
     protected $app;
+    protected $version     = '0.0.0';
 
-    /**
-     * Executed before the profiled request.
-     *
-     * @return void
-     */
-    public function before()
-    {
-        // Called during service provider registration.
-    }
-
-    /**
-     * Executed after the profiled request.
-     *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
-     */
-    public function after($request, $response)
-    {
-        // Called after the framework request cycle.
-    }
-
-    /**
-     * Executed during the profiler request cycle.
-     *
-     * @return void
-     */
     public function live()
     {
         // Called in the profiler request.
     }
 
-    /**
-     * Get the display name for this module.
-     *
-     * @return string
-     */
     public function getName()
     {
         return $this->name;
+    }
+
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    public function register(Application $app)
+    {
+        $this->app = $app;
     }
 
     /**
@@ -198,8 +96,7 @@ abstract class Module
     /**
      * Set the badge count for this module.
      *
-     * @param  integer $count
-     * @return void
+     * @param  integer $badge
      */
     public function setBadge($badge)
     {
@@ -320,9 +217,9 @@ abstract class Module
     public function getStorage()
     {
         return [
-            'data'          => $this->data,
-            'global'        => $this->global,
-            'badge'         => $this->badge
+            'data'   => $this->data,
+            'global' => $this->global,
+            'badge'  => $this->badge
         ];
     }
 
@@ -335,11 +232,11 @@ abstract class Module
     public function getMenuItem($key)
     {
         return [
-            'title'     => $this->name,
-            'slug'      => $this->slug,
-            'url'       => url(sprintf(self::URL, $key, $this->slug)),
-            'icon'      => $this->icon,
-            'badge'     => $this->badge,
+            'title' => $this->name,
+            'slug'  => $this->slug,
+            'url'   => url(sprintf(self::URL, $key, $this->slug)),
+            'icon'  => $this->icon,
+            'badge' => $this->badge,
         ];
     }
 }

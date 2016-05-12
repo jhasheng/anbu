@@ -2,7 +2,7 @@
 
 namespace Purple\Anbu\Repositories;
 
-use Purple\Anbu\Models\Storage;
+use Purple\Anbu\Storage\Storage;
 
 class DatabaseRepository implements Repository
 {
@@ -10,7 +10,7 @@ class DatabaseRepository implements Repository
      * Get a storage model.
      *
      * @param  string $key
-     * @return \Purple\Anbu\Models\Storage
+     * @return \Purple\Anbu\Storage\Storage
      */
     public function get($key = null)
     {
@@ -28,7 +28,7 @@ class DatabaseRepository implements Repository
     /**
      * Store a storage model.
      *
-     * @param  Storage $storage
+     * @param  \Purple\Anbu\Storage\Storage $storage
      * @return void
      */
     public function put(Storage $storage)

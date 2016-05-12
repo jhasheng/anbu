@@ -2,11 +2,12 @@
 
 namespace Purple\Anbu\Modules\History;
 
-use Illuminate\Pagination\PaginationServiceProvider;
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
 use Purple\Anbu\Repositories\Repository;
+use Symfony\Component\HttpFoundation\Response;
 
-class History extends Module
+class History extends AbstractModule
 {
     /**
      * Storage repository instance.
@@ -48,20 +49,19 @@ class History extends Module
      *
      * @param Repository $repository
      */
-    public function __construct(Repository $repository)
-    {
-        // Bind repository to class property.
-        $this->repository = $repository;
-    }
+//    public function __construct(Repository $repository)
+//    {
+//         Bind repository to class property.
+//        $this->repository = $repository;
+//    }
 
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         // Bind the current URI to global data.
         $this->global['uri'] = $this->getCurrentRequestUri();
@@ -100,4 +100,8 @@ class History extends Module
         return "{$request->method()} {$current->getPath()}";
     }
 
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
+    }
 }

@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\Logger;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Logger extends Module
+class Logger extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -37,9 +39,9 @@ class Logger extends Module
     /**
      * Executed before the profiled request.
      *
-     * @return void
+     * @param Application $app
      */
-    public function before()
+    public function before(Application $app)
     {
         // Retrieve the events compontent.
         $event = $this->app->make('events');
@@ -65,11 +67,10 @@ class Logger extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         // Set badge to number of logs.
         $this->badge = count($this->data['logs']);

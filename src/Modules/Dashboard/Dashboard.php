@@ -2,11 +2,12 @@
 
 namespace Purple\Anbu\Modules\Dashboard;
 
+use Purple\Anbu\Modules\AbstractModule;
 use Purple\Anbu\Purple;
-use Purple\Anbu\Modules\Module;
 use Illuminate\Foundation\Application;
+use Symfony\Component\HttpFoundation\Response;
 
-class Dashboard extends Module
+class Dashboard extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -39,11 +40,10 @@ class Dashboard extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         // Bind Laravel version information.
         $this->global['version'] = Application::VERSION;
@@ -89,5 +89,10 @@ class Dashboard extends Module
 
         // Return rendered template view.
         return $view->make("anbu_widget::{$template}", $module->getData());
+    }
+
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
     }
 }

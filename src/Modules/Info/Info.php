@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\Info;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Info extends Module
+class Info extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -67,5 +69,15 @@ class Info extends Module
 
         // Store in data array.
         $this->data['info'] =  $info;
+    }
+
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
+    }
+
+    public function after(Application $app, Response $response)
+    {
+        // TODO: Implement after() method.
     }
 }

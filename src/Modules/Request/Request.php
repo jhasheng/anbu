@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\Request;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Request extends Module
+class Request extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -37,12 +39,12 @@ class Request extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
+        $request = $app->request;
         // Dump all request data into the class data array.
         $this->data['request'] = $request->all();
 
@@ -54,5 +56,10 @@ class Request extends Module
 
         // Place response headers in the data array.
         $this->data['responseHeaders'] = $response->headers->all();
+    }
+
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
     }
 }

@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\Events;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Events extends Module
+class Events extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -37,9 +39,9 @@ class Events extends Module
     /**
      * Executed before the profiled request.
      *
-     * @return void
+     * @param Application $app
      */
-    public function before()
+    public function before(Application $app)
     {
         // Initialize array.
         $this->data['events'] = [];
@@ -73,11 +75,10 @@ class Events extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         $this->badge = count($this->data['events']);
     }

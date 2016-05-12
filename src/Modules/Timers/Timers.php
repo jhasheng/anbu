@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\Timers;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class Timers extends Module
+class Timers extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -47,17 +49,7 @@ class Timers extends Module
      * @var boolean
      */
     protected $hasWidget = true;
-
-    /**
-     * Executed before the profiled request.
-     *
-     * @return void
-     */
-    public function before()
-    {
-        // Set timers array.
-        $this->data['times'] = [];
-    }
+    
 
     /**
      * Start a profile timer.
@@ -76,39 +68,32 @@ class Timers extends Module
      *
      * @param  mixed  $key
      * @param  string $comment
-     * @return
      */
     public function end($key, $comment = null)
     {
-        // Calculate end microtime.
         $end = microtime(true);
-
-        // Retrieve start microtime.
         $start = $this->startTimes[$key];
-
-        // If we don't have a start.
         if (!$start) {
-
-            // Get out of here.
             return;
         }
 
-        // Calculate the duration in microseconds.
         $duration = $end - $start;
-
-        // Add the completed time sequence to the data array.
         $this->data['times'][] = compact('key', 'start', 'end', 'duration', 'comment');
     }
 
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
-        $this->badge = count($this->data['times']);
+//        $this->badge = count($this->data['times']);
+    }
+
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
     }
 }

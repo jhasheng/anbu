@@ -2,9 +2,11 @@
 
 namespace Purple\Anbu\Modules\RoutesBrowser;
 
-use Purple\Anbu\Modules\Module;
+use Illuminate\Foundation\Application;
+use Purple\Anbu\Modules\AbstractModule;
+use Symfony\Component\HttpFoundation\Response;
 
-class RoutesBrowser extends Module
+class RoutesBrowser extends AbstractModule
 {
     /**
      * The display name of the module.
@@ -37,11 +39,10 @@ class RoutesBrowser extends Module
     /**
      * Executed after the profiled request.
      *
-     * @param  Symfony/Component/HttpFoundation/Request  $response
-     * @param  Symfony/Component/HttpFoundation/Response $response
-     * @return void
+     * @param  Application  $app
+     * @param  Response $response
      */
-    public function after($request, $response)
+    public function after(Application $app, Response $response)
     {
         // Get hold of the router component.
         $router = $this->app->make('router');
@@ -86,5 +87,10 @@ class RoutesBrowser extends Module
     public function highlightParams($uri)
     {
         return preg_replace('/(\{.*?\})/', '<span class="parameter">$1</span>', $uri);
+    }
+
+    public function before(Application $app)
+    {
+        // TODO: Implement before() method.
     }
 }
