@@ -1,6 +1,6 @@
 <?php
 
-namespace Purple\Anbu\Exceptions;
+namespace Purple\Anbu\Exception;
 
 use RuntimeException;
 
