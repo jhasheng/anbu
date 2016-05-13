@@ -23,8 +23,12 @@ class MySQL extends Model implements StorageInterface
      */
     public function getStorage()
     {
-        // Get the unserialized storage.
-        return unserialize(base64_decode($this->storage));
+        $storages = unserialize(base64_decode($this->getAttribute('storage')));
+        
+        foreach ($storages as $storage) {
+            
+        }
+        return unserialize(base64_decode($this->getAttribute('storage')));
     }
 
     public function setUri($uri)
@@ -41,4 +45,5 @@ class MySQL extends Model implements StorageInterface
     {
         $this->setAttribute('storage', base64_encode(serialize($storage)));
     }
+
 }
