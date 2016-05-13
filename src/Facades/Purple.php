@@ -2,22 +2,12 @@
 
 namespace Purple\Anbu\Facades;
 
-use App;
+use Illuminate\Support\Facades\Facade;
 
-class Purple
+class Purple extends Facade
 {
-    /**
-     * Proxy static method calls to module instances.
-     *
-     * @param  string $method
-     * @param  mixed $args
-     * @return mixed
-     */
-    public static function __callStatic($method, $args)
+    protected static function getFacadeAccessor()
     {
-        // Resolve profiler from container.
-        $profiler = App::make(\Purple\Anbu\Purple::class);
-        // Return the module instance by method name.
-        return $profiler->getModule($method);
+        return 'purple';
     }
 }
