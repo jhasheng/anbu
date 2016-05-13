@@ -11,6 +11,8 @@ interface ModuleInterface
     public function getVersion();
 
     public function getData();
+    
+    public function getSlug();
 
     public function register(Application $app);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Purple\Anbu\Modules\Container;
+namespace Purple\Anbu\Modules;
 
 use Exception;
 use Illuminate\Foundation\Application;
@@ -18,7 +18,7 @@ class Container extends AbstractModule
      * Format for displaying a non scalar value.
      */
     const NON_SCALAR_FORMAT = '<%s>';
-
+    protected $template = 'container';
     /**
      * The display name of the module.
      *

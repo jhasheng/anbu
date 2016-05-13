@@ -1,6 +1,6 @@
 <?php
 
-namespace Purple\Anbu\Modules\Debug;
+namespace Purple\Anbu\Modules;
 
 use Illuminate\Foundation\Application;
 use Purple\Anbu\Modules\AbstractModule;
@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Debug extends AbstractModule
 {
+    protected $template = 'debug';
     /**
      * The display name of the module.
      *

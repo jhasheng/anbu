@@ -1,6 +1,6 @@
 <?php
 
-namespace Purple\Anbu\Modules\Request;
+namespace Purple\Anbu\Modules;
 
 use Illuminate\Foundation\Application;
 use Purple\Anbu\Modules\AbstractModule;
@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Request extends AbstractModule
 {
+    protected $template = 'request';
     /**
      * The display name of the module.
      *

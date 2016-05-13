@@ -1,6 +1,6 @@
 <?php
 
-namespace Purple\Anbu\Modules\Info;
+namespace Purple\Anbu\Modules;
 
 use Illuminate\Foundation\Application;
 use Purple\Anbu\Modules\AbstractModule;
@@ -35,6 +35,8 @@ class Info extends AbstractModule
      * @var string
      */
     protected $icon = 'info-circle';
+    
+    protected $template = 'info';
 
     /**
      * Executed during the profiler request cycle.

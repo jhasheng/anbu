@@ -1,6 +1,6 @@
 <?php
 
-namespace Purple\Anbu\Modules\History;
+namespace Purple\Anbu\Modules;
 
 use Illuminate\Foundation\Application;
 use Purple\Anbu\Modules\AbstractModule;
@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class History extends AbstractModule
 {
+    protected $template = 'history';
     /**
      * Storage repository instance.
      *
@@ -49,11 +50,10 @@ class History extends AbstractModule
      *
      * @param Repository $repository
      */
-//    public function __construct(Repository $repository)
-//    {
-//         Bind repository to class property.
-//        $this->repository = $repository;
-//    }
+    public function __construct(Repository $repository)
+    {
+        $this->repository = $repository;
+    }
 
     /**
      * Executed after the profiled request.
@@ -91,11 +91,9 @@ class History extends AbstractModule
     protected function getCurrentRequestUri()
     {
         // Get the routing component.
-        $current = $this->app->make('router')->current();
-
+        $current = $this->app['router']->current();
         // Get the current request.
-        $request = $this->app->make('request');
-
+        $request = $this->app['request'];
         // Return the current request.
         return "{$request->method()} {$current->getPath()}";
     }

@@ -1,14 +1,14 @@
 <?php
 
-namespace Purple\Anbu\Modules\Dashboard;
+namespace Purple\Anbu\Modules;
 
-use Purple\Anbu\Modules\AbstractModule;
 use Purple\Anbu\Purple;
 use Illuminate\Foundation\Application;
 use Symfony\Component\HttpFoundation\Response;
 
 class Dashboard extends AbstractModule
 {
+    protected $template = 'dashboard';
     /**
      * The display name of the module.
      *
@@ -56,6 +56,9 @@ class Dashboard extends AbstractModule
      */
     public function live()
     {
+        /**
+         * @var $module \Purple\Anbu\Modules\ModuleInterface
+         */
         $this->data['widgets'] = [];
         $profiler = $this->app->make(Purple::class);
         foreach ($profiler->getModules() as $module) {
@@ -73,22 +76,12 @@ class Dashboard extends AbstractModule
     /**
      * Render a widget view.
      *
-     * @param  Module $module
+     * @param  ModuleInterface $module
      * @return View
      */
-    protected function renderWidget($module)
+    protected function renderWidget(ModuleInterface $module)
     {
-        // Resolve view component.
-        $view = $this->app->make('view');
-
-        // Add a module view namespace for this widget.
-        $view->addNamespace('anbu_widget', $module->getPath());
-
-        // Extract template name.
-        $template = $module->getWidget();
-
-        // Return rendered template view.
-        return $view->make("anbu_widget::{$template}", $module->getData());
+        return view('anbu.widget.widget', $module->getData())->render();
     }
 
     public function before(Application $app)
