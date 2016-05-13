@@ -101,8 +101,8 @@ class Purple
         foreach ($this->modules as $module) {
             $module->after($this->app, $response);
         }
-        $this->endHook();
-        $this->displayButton($response, 0);
+        $result = $this->endHook();
+        $this->displayButton($response, $result);
     }
 
     /**
@@ -136,19 +136,21 @@ class Purple
         }
         $storage->setStorage($result);
         $this->repository->put($storage);
+        return $storage;
     }
 
-    protected function displayButton(Response $response, $id)
+    protected function displayButton(Response $response, $storage)
     {
         $header = $response->headers;
         if (strstr($header->get('Content-Type'), 'text/html')) {
-            $response->setContent($response->getContent() . $this->renderButtonHtml($id));
+            $response->setContent($response->getContent() . $this->renderButtonHtml($storage));
         }
     }
 
-    protected function renderButtonHtml($id)
+    protected function renderButtonHtml($storage)
     {
-        return view('anbu.button', compact('id'))->render();
+        dd($storage);
+        return view('anbu.button', compact('storage'))->render();
     }
 
     /**
