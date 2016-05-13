@@ -9,12 +9,10 @@
 
 namespace Purple\Anbu\ServiceProvider;
 
-use App\Http\Kernel;
-use Illuminate\Cache\Console\ClearCommand;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
-use Purple\Anbu\Middleware\PurpleInject;
+use Purple\Anbu\Command\ClearCommand;
 use Purple\Anbu\Purple;
 use Purple\Anbu\Repositories\Repository;
 
@@ -35,33 +33,6 @@ class PurpleServiceProvider extends ServiceProvider
         $this->publishFiles();
     }
 
-    /**
-     * Register the application services.
-     * @return void
-     */
-    public function register2()
-    {
-        //默认配置文件
-        $this->mergeConfigFrom(__DIR__ . '/../../config/anbu.php', 'anbu');
-        $this->app['db']->enableQueryLog();
-        /**
-         * @var $config \Illuminate\Config\Repository
-         */
-        $config     = $this->app['config'];
-        $repo       = $config->get('anbu.repository', self::DEFAULT_REPO);
-        $repository = $this->app->make($repo);
-        $this->app->bind(Repository::class, $repo);
-        /**
-         * @var $purple Purple
-         */
-        $this->app->singleton(Purple::class, function ($app) use ($repository) {
-            $purple = new Purple($this->app, $repository);
-            $purple->registerModules($app);
-            return $purple;
-        });
-
-    }
-
     public function register()
     {
         /**
@@ -70,10 +41,15 @@ class PurpleServiceProvider extends ServiceProvider
         $db = $this->app['db'];
         $db->enableQueryLog();
 
+        /**
+         * @var $purple \Purple\Anbu\Purple
+         */
         $purple = $this->app->make(Purple::class);
 
         $this->app->instance(Purple::class, $purple);
         $purple->registerHook();
+
+        $this->registerRoutes();
     }
 
     protected function registerCommands()
@@ -92,26 +68,11 @@ class PurpleServiceProvider extends ServiceProvider
          * @var $route Router
          */
         $route = $this->app['router'];
-        $route->middleware('purple', PurpleInject::class);
         $route->get('anbu/{storage?}/{module?}', [
             'as'         => 'anbu.show',
-            'middleware' => 'purple:1',
+//            'middleware' => 'purple:1',
             'uses'       => 'Purple\Anbu\Controller\ProfilerController@index'
         ]);
-    }
-
-    /**
-     * Register the Debugbar Middleware
-     *
-     * @param  string $middleware
-     */
-    protected function registerMiddleware($middleware)
-    {
-        /**
-         * @var $kernel Kernel
-         */
-        $kernel = $this->app['Illuminate\Contracts\Http\Kernel'];
-        $kernel->pushMiddleware($middleware);
     }
 
     protected function publishFiles()
