@@ -27,7 +27,7 @@ class PurpleInject
     {
         $purple = $this->purple;
 
-        if (!$purple->isEnabled()) {
+        if (!$purple->isEnabled() || $purple->isAnbuRequest() || $purple->inConsole()) {
             return $next($request);
         }
         $purple->beforeHook();

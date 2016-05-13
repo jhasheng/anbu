@@ -16,11 +16,9 @@ class DatabaseRepository implements Repository
     {
         // If no key has been provided.
         if (is_null($key)) {
-
             // Return the latest storage record.
             return Storage::orderBy('id', 'desc')->firstOrFail();
         }
-
         // Return a storage record by key.
         return Storage::findOrFail($key);
     }

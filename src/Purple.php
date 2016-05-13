@@ -12,7 +12,6 @@ namespace Purple\Anbu;
 use Purple\Anbu\Modules\ModuleInterface;
 use Purple\Anbu\Repositories\DatabaseRepository;
 use Purple\Anbu\Repositories\Repository;
-use Purple\Anbu\Storage\Adapter\MySQL;
 use Purple\Anbu\Storage\Storage;
 use Purple\Anbu\Storage\StorageInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,17 +38,17 @@ class Purple
     protected $display = true;
 
     protected $defaultModules = [
-        \Purple\Anbu\Modules\Dashboard\Dashboard::class,
-        \Purple\Anbu\Modules\RoutesBrowser\RoutesBrowser::class,
-        \Purple\Anbu\Modules\Request\Request::class,
-        \Purple\Anbu\Modules\History\History::class,
-        \Purple\Anbu\Modules\Info\Info::class,
-        \Purple\Anbu\Modules\Timers\Timers::class,
-        \Purple\Anbu\Modules\Debug\Debug::class,
-        \Purple\Anbu\Modules\Events\Events::class,
-        \Purple\Anbu\Modules\Logger\Logger::class,
-        \Purple\Anbu\Modules\QueryLogger\QueryLogger::class,
-//        'Anbu\Modules\Container\Container',
+        \Purple\Anbu\Modules\Dashboard::class,
+        \Purple\Anbu\Modules\RoutesBrowser::class,
+        \Purple\Anbu\Modules\Request::class,
+        \Purple\Anbu\Modules\History::class,
+        \Purple\Anbu\Modules\Info::class,
+        \Purple\Anbu\Modules\Timers::class,
+        \Purple\Anbu\Modules\Debug::class,
+        \Purple\Anbu\Modules\Events::class,
+        \Purple\Anbu\Modules\Logger::class,
+        \Purple\Anbu\Modules\QueryLogger::class,
+//        'Anbu\Modules\Container',
     ];
 
     public function __construct(Application $app, DatabaseRepository $repository)
@@ -57,13 +56,17 @@ class Purple
         $this->app        = $app;
         $this->repository = $repository;
         foreach ($this->defaultModules as $module) {
-            array_push($this->modules, $app->make($module));
+            array_push($this->modules, $app->make($module, [$this->repository]));
         }
     }
 
     public function getModule($key)
     {
-        return $this->modules[$key];
+        $module = array_filter($this->modules, function (ModuleInterface $val) use ($key) {
+            if ($val->getSlug() === $key) return $val;
+            return false;
+        });
+        return $module ? array_pop($module) : null;
     }
 
     public function getModules()
@@ -102,12 +105,26 @@ class Purple
         $this->displayButton($response, 0);
     }
 
+    /**
+     * @return bool
+     */
+    public function isAnbuRequest()
+    {
+        return $this->app['request']->segment(1) == 'anbu';
+    }
+    
+    public function inConsole()
+    {
+        return $this->app->runningInConsole();
+    }
+
     protected function endHook()
     {
+        $adapter = $this->app['config']->get('anbu.adapter', 'mysql');
         /**
          * @var $storage StorageInterface
          */
-        $storage = new Storage(new MySQL());
+        $storage = new Storage($adapter);
         $storage->setUri($this->getCurrentRequestUri());
         $storage->setTime(microtime(true) - LARAVEL_START);
         /**
@@ -115,7 +132,7 @@ class Purple
          */
         $result = [];
         foreach ($this->modules as $module) {
-            $result[$module->getName()] = $module->getData();
+            $result[$module->getSlug()] = $module->getData();
         }
         $storage->setStorage($result);
         $this->repository->put($storage);

@@ -3,7 +3,7 @@
 namespace Purple\Anbu\Services;
 
 use Purple\Anbu\Purple;
-use Purple\Anbu\Models\Storage;
+use Purple\Anbu\Storage\StorageInterface;
 
 class ModuleHydrator
 {
@@ -24,18 +24,21 @@ class ModuleHydrator
 
     /**
      * Hydrate modules with data from storage record.
-     * @param  Storage $storage
+     * @param  StorageInterface $storage
      * @return void
      */
-    public function hydrate(Storage $storage)
+    public function hydrate(StorageInterface $storage)
     {
-        $modules = $storage->getData();
+        $modules = $storage->getStorage();
         foreach ($modules as $slug => $module) {
             $m = $this->purple->getModule($slug);
             // Set module data from storage.
-            $m->setData(array_get($module, 'data'));
-            $m->setGlobal(array_get($module, 'global'));
-            $m->setBadge(array_get($module, 'badge'));
+            $m->setData(isset($module['data']) ? $module['data'] : []);
+            $m->setGlobal(isset($module['global']) ? $module['global'] : []);
+            $m->setBadge(isset($module['badge']) ? $module['badge'] : []);
+//            $m->setData(array_get($module, 'data'));
+//            $m->setGlobal(array_get($module, 'global'));
+//            $m->setBadge(array_get($module, 'badge'));
         }
     }
 }

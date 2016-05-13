@@ -4,7 +4,7 @@
 <div class="widgets">
     @foreach($widgets as $widget)
     <div class="widget">
-        <span class="widget-badge"><span class="widget-badge-count">{{ $widget->badge }}</span></span>
+        <span class="widget-badge"><span class="widget-badge-count">{{ count($widget->badge) }}</span></span>
         <h1>{{ $widget->name }}</h1>
         {!! $widget->view !!}
     </div>
