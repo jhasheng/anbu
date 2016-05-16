@@ -1,6 +1,6 @@
 <h1>History</h1>
-<h2>Latest Request</h2>
-<a href="{{ url('/anbu') }}" class="latest-request"><i class="fa fa-reply"></i>&nbsp;&nbsp; View Latest Request</a>
+{{--<h2>Latest Request</h2>--}}
+{{--<a href="{{ url('/anbu') }}" class="latest-request"><i class="fa fa-reply"></i>&nbsp;&nbsp; View Latest Request</a>--}}
 <h2>Request History</h2>
 @if (isset($history) && count($history))
     <p>Click on a title to replay a request and view debug information.</p>

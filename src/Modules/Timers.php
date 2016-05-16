@@ -49,7 +49,7 @@ class Timers extends AbstractModule
      *
      * @var boolean
      */
-    protected $hasWidget = true;
+    protected $hasWidget = false;
     
 
     /**
@@ -90,11 +90,11 @@ class Timers extends AbstractModule
      */
     public function after(Application $app, Response $response)
     {
-//        $this->badge = count($this->data['times']);
+        $this->badge = count($this->data['times']);
     }
 
     public function before(Application $app)
     {
-        // TODO: Implement before() method.
+        $this->data['times'] = [];
     }
 }

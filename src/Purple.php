@@ -48,7 +48,8 @@ class Purple
         \Purple\Anbu\Modules\Timers::class,
         \Purple\Anbu\Modules\Info::class,
         \Purple\Anbu\Modules\History::class,
-//        'Anbu\Modules\Container',
+//        \Purple\Anbu\Modules\Authentication::class,
+//        \Purple\Anbu\Modules\Container::class,
     ];
 
     public function __construct(Application $app, DatabaseRepository $repository)
