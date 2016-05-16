@@ -22,8 +22,6 @@ class ProfilerController extends BaseController
         $this->hydrator->hydrate($record);
         $module = $this->purple->getModule($module);
         $data   = $this->buildViewData($record, $module);
-        $data['uri'] = '';
-        $data['version'] = Application::VERSION;
 //        dd($data);
         return view('anbu.index', $data);
 //        } catch (Exception $exception) {

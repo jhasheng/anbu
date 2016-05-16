@@ -59,7 +59,6 @@ class Dashboard extends AbstractModule
         /**
          * @var $module \Purple\Anbu\Modules\ModuleInterface
          */
-        $this->data['widgets'] = [];
         $profiler = $this->app->make(Purple::class);
         foreach ($profiler->getModules() as $module) {
             if ($module->hasWidget()) {
@@ -86,6 +85,6 @@ class Dashboard extends AbstractModule
 
     public function before(Application $app)
     {
-        // TODO: Implement before() method.
+        $this->data['widgets'] = [];
     }
 }

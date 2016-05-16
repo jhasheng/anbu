@@ -75,6 +75,8 @@ class RoutesBrowser extends AbstractModule
             $current->getActionName()                         // Action
         ];
 
+        $this->global['uri'] = $request->method() . " " .$current->getPath();
+
         // Set badge to number of registered routes.
         $this->badge = count($this->data['routes']);
     }
