@@ -3,7 +3,6 @@
 namespace Purple\Anbu\Modules;
 
 use Illuminate\Foundation\Application;
-use Purple\Anbu\Modules\AbstractModule;
 use Symfony\Component\HttpFoundation\Response;
 
 class QueryLogger extends AbstractModule
@@ -90,10 +89,20 @@ class QueryLogger extends AbstractModule
      */
     protected function highlightQuery($query)
     {
-        foreach ($this->keywords as $keyword) {
-            $query = preg_replace("/({$keyword})/", '<span class="sql-keyword">$1</span>', $query);
-        }
-        $query = preg_replace('/\`(.*?)\`/', '`<span class="sql-value">$1</span>`', $query);
+//        $hits = [];
+//        foreach ($this->keywords as $keyword) {
+////            var_dump(preg_match('/\s?' . $keyword . '\s?/', $query));
+//            if (preg_match('/\s?' . $keyword . '\s?/', $query)) {
+//                array_push($hits, $keyword);
+//            }
+////            $query = preg_replace('/\s?(' . $keyword . ')\s?/', '<span class="sql-keyword">$1</span>', $query, 1);
+//        }
+//
+//        foreach ($hits as $key) {
+//            $query = preg_replace('/\s?(' . $key . ')\s?/', '<span class="sql-keyword">$1</span>', $query, 1);
+//        }
+//
+//        $query = preg_replace('/\`(.*?)\`/', '`<span class="sql-value">$1</span>`', $query);
         return $query;
     }
 
@@ -108,6 +117,7 @@ class QueryLogger extends AbstractModule
         $connections           = $app['db']->getConnections();
         $logs                  = $connections['mysql']->getQueryLog();
         $this->data['queries'] = [];
+
         foreach ($logs as $log) {
             array_push($this->data['queries'], [$this->highlightQuery($log['query']), $log['bindings'], $log['time']]);
         }

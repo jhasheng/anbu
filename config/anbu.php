@@ -11,33 +11,40 @@ return [
     /**
      * 启用分析工具
      */
-    'disable' => env('PURPLE_ENABLE', true),
+    'disable'        => env('PURPLE_ENABLE', true),
 
     /**
      * 页面是否显示按钮
      */
-    'display' => true,
+    'display'        => true,
 
     /**
      * 数据收集驱动类型
      */
-    'adapter' => 'mysql',
+    'adapter'        => 'mysql',
 
     /**
      * 分析工具列表
      */
-    'modules' => [
-        'Purple\Anbu\Modules\Dashboard\Dashboard',
-        'Purple\Anbu\Modules\RoutesBrowser\RoutesBrowser',
-        'Purple\Anbu\Modules\Request\Request',
-        'Purple\Anbu\Modules\QueryLogger\QueryLogger',
-        'Purple\Anbu\Modules\Logger\Logger',
-        'Purple\Anbu\Modules\Events\Events',
-        'Purple\Anbu\Modules\Debug\Debug',
-        'Purple\Anbu\Modules\Timers\Timers',
-        'Purple\Anbu\Modules\Info\Info',
-        'Purple\Anbu\Modules\History\History',
+    'modules'        => [
+        'dashboard', 'routes', 'request', 'query', 'logger', 'events', 'debug', 'timer', 
+        'info', 'history', 'container'
 //        'Anbu\Modules\Container\Container',
     ],
-    
+
+    /**
+     * 默认模块
+     */
+    'default_module' => 'dashboard',
+
+    /**
+     * 路由前缀
+     */
+    'route_prefix'   => 'anbu',
+
+    /**
+     * 存储名（mysql:表名，redis：key值....）
+     */
+    'storage_name'   => 'anbu',
+
 ];

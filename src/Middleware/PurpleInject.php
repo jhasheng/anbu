@@ -26,7 +26,7 @@ class PurpleInject
     public function handle(Request $request, Closure $next)
     {
         $purple = $this->purple;
-
+        
         if (!$purple->isEnabled() || $purple->isAnbuRequest() || $purple->inConsole()) {
             return $next($request);
         }

@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Events extends AbstractModule
 {
+    protected $end = false;
+
     protected $template = 'events';
     /**
      * The display name of the module.
@@ -47,12 +49,12 @@ class Events extends AbstractModule
         // Initialize array.
         $this->data['events'] = [];
 
-        // Get the events system.
-        $event = $this->app->make('events');
+        /**
+         * @var $event \Illuminate\Events\Dispatcher
+         */
+        $event = $this->app['events'];
 
         // Bind handler for all events.
-        count($this->data['events']);
-        echo PHP_EOL;
         $event->listen('*', [$this, 'eventFired']);
     }
 
@@ -63,9 +65,12 @@ class Events extends AbstractModule
      */
     public function eventFired()
     {
+        if ($this->end) return;
         // Get the events system.
-        $event = $this->app->make('events');
-
+        /**
+         * @var $event \Illuminate\Events\Dispatcher
+         */
+        $event = $this->app['events'];
         // Add the event to the data array.
         $this->data['events'][] = [
             $event->firing(),
@@ -82,5 +87,6 @@ class Events extends AbstractModule
     public function after(Application $app, Response $response)
     {
         $this->badge = count($this->data['events']);
+        $this->end = true;
     }
 }

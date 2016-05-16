@@ -27,4 +27,12 @@ trait StorageTrait
         $this->storage = base64_encode(serialize($storage));
     }
 
+    public function getStorage()
+    {
+        return [
+            'data'   => $this->data,
+            'global' => $this->global,
+            'badge'  => $this->badge
+        ];
+    }
 }

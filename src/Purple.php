@@ -41,13 +41,13 @@ class Purple
         \Purple\Anbu\Modules\Dashboard::class,
         \Purple\Anbu\Modules\RoutesBrowser::class,
         \Purple\Anbu\Modules\Request::class,
-        \Purple\Anbu\Modules\History::class,
-        \Purple\Anbu\Modules\Info::class,
-        \Purple\Anbu\Modules\Timers::class,
-        \Purple\Anbu\Modules\Debug::class,
         \Purple\Anbu\Modules\Events::class,
         \Purple\Anbu\Modules\Logger::class,
         \Purple\Anbu\Modules\QueryLogger::class,
+        \Purple\Anbu\Modules\Debug::class,
+        \Purple\Anbu\Modules\Timers::class,
+        \Purple\Anbu\Modules\Info::class,
+        \Purple\Anbu\Modules\History::class,
 //        'Anbu\Modules\Container',
     ];
 
@@ -60,6 +60,11 @@ class Purple
         }
     }
 
+    /**
+     * 获取指定模块
+     * @param $key
+     * @return mixed|null
+     */
     public function getModule($key)
     {
         $module = array_filter($this->modules, function (ModuleInterface $val) use ($key) {
@@ -69,6 +74,10 @@ class Purple
         return $module ? array_pop($module) : null;
     }
 
+    /**
+     * 获取所有模块信息
+     * @return array
+     */
     public function getModules()
     {
         return $this->modules;
@@ -79,6 +88,9 @@ class Purple
         return $this->enabled;
     }
 
+    /**
+     * 注册启用的模块
+     */
     public function registerHook()
     {
         foreach ($this->modules as $module) {
@@ -86,6 +98,9 @@ class Purple
         }
     }
 
+    /**
+     * 初始化模块，传入application对象
+     */
     public function beforeHook()
     {
         foreach ($this->modules as $module) {
@@ -93,6 +108,10 @@ class Purple
         }
     }
 
+    /**
+     * 结束模块调用，传入Response对象
+     * @param Response $response
+     */
     public function afterHook(Response $response)
     {
         /**
@@ -106,20 +125,30 @@ class Purple
     }
 
     /**
+     * 是否为profiler请求
      * @return bool
      */
     public function isAnbuRequest()
     {
         return $this->app['request']->segment(1) == 'anbu';
     }
-    
+
+    /**
+     * 是否为CLI请求
+     * @return bool
+     */
     public function inConsole()
     {
         return $this->app->runningInConsole();
     }
 
+    /**
+     * 结束模块调用逻辑
+     * @return StorageInterface
+     */
     protected function endHook()
     {
+        //获取存储方式
         $adapter = $this->app['config']->get('anbu.adapter', 'mysql');
         /**
          * @var $storage StorageInterface
@@ -131,14 +160,20 @@ class Purple
          * @var $module ModuleInterface
          */
         $result = [];
+        //组装模块收集到的数据，填充至storage对象
         foreach ($this->modules as $module) {
-            $result[$module->getSlug()] = $module->getData();
+            $result[$module->getSlug()] = $module->getStorage();
         }
         $storage->setStorage($result);
         $this->repository->put($storage);
         return $storage;
     }
 
+    /**
+     * 显示profiler入口到请求页面
+     * @param Response $response
+     * @param $storage
+     */
     protected function displayButton(Response $response, $storage)
     {
         $header = $response->headers;
@@ -147,9 +182,15 @@ class Purple
         }
     }
 
+    /**
+     * 渲染入口按钮
+     * @param $storage
+     * @return string
+     * @throws \Exception
+     * @throws \Throwable
+     */
     protected function renderButtonHtml($storage)
     {
-        dd($storage);
         return view('anbu.button', compact('storage'))->render();
     }
 

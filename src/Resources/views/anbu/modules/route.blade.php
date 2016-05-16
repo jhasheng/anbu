@@ -9,9 +9,9 @@
     </thead>
     <tbody>
         <tr>
-            <td><span class="method-tag method-tag-{{ strtolower('a') }}"></span></td>
-            <td class="code"></td>
-            <td class="code"></td>
+            <td class="code"><span class="method-tag method-tag-{{ strtolower($current[0]) }}">{{ $current[0] }}</span></td>
+            <td class="code">{{ $current[1] }}</td>
+            <td class="code">{{ $current[2] }}</td>
         </tr>
     </tbody>
 </table>

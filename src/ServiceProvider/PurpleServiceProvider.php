@@ -14,7 +14,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Purple\Anbu\Command\ClearCommand;
 use Purple\Anbu\Purple;
-use Purple\Anbu\Repositories\Repository;
+use Purple\Anbu\Repositories\DatabaseRepository;
 
 class PurpleServiceProvider extends ServiceProvider
 {
@@ -41,6 +41,12 @@ class PurpleServiceProvider extends ServiceProvider
         $db = $this->app['db'];
         $db->enableQueryLog();
 
+        $config = $this->app['config'];
+
+        $adapter     = $config->get('anbu.adapter', 'mysql');
+        $storageName = $config->get('anbu.storage_name', 'anbu');
+        $routePrefix = $config->get('anbu.route_prefix', 'anbu');
+
         /**
          * @var $purple \Purple\Anbu\Purple
          */
@@ -49,32 +55,44 @@ class PurpleServiceProvider extends ServiceProvider
         $this->app->instance(Purple::class, $purple);
         $purple->registerHook();
 
-        $this->registerRoutes();
+        if ('mysql' === $adapter) $this->installTable($storageName);
+        $this->registerRoutes($routePrefix);
+        $this->registerCommands();
     }
 
+    /**
+     * command注入
+     */
     protected function registerCommands()
     {
-        $this->app['command.purple.clear'] = $this->app->share(function (Repository $repository) {
+        $repository                        = $this->app->make(DatabaseRepository::class);
+        $this->app['command.purple.clear'] = $this->app->share(function () use ($repository) {
             return new ClearCommand($repository);
         });
 
         $this->commands('command.purple.clear');
-        $this->installTable();
     }
 
-    protected function registerRoutes()
+    /**
+     * 路由注册
+     * @param $prefix String 路由前缀
+     */
+    protected function registerRoutes($prefix)
     {
         /**
          * @var $route Router
          */
         $route = $this->app['router'];
-        $route->get('anbu/{storage?}/{module?}', [
-            'as'         => 'anbu.show',
-//            'middleware' => 'purple:1',
-            'uses'       => 'Purple\Anbu\Controller\ProfilerController@index'
+        $route->get('{storage?}/{module?}', [
+            'prefix' => $prefix,
+            'as'     => 'anbu.show',
+            'uses'   => 'Purple\Anbu\Controller\ProfilerController@index'
         ]);
     }
 
+    /**
+     * 发布资源文件
+     */
     protected function publishFiles()
     {
         //发布视图文件
@@ -91,11 +109,15 @@ class PurpleServiceProvider extends ServiceProvider
         ], 'asset');
     }
 
-    protected function installTable()
+    /**
+     * 初始化表结构
+     * @param $tableName String 表名
+     */
+    protected function installTable($tableName)
     {
         $schema = $this->app['db']->connection()->getSchemaBuilder();
-        if (!$schema->hasTable('anbu')) {
-            $schema->create('anbu', function (Blueprint $table) {
+        if (!$schema->hasTable($tableName)) {
+            $schema->create($tableName, function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('uri')->nullable();
                 $table->float('time')->nullable();

@@ -2,6 +2,7 @@
 
 namespace Purple\Anbu\Controller;
 
+use Illuminate\Foundation\Application;
 use Purple\Anbu\Modules\ModuleInterface;
 use Purple\Anbu\Storage\StorageInterface;
 use Purple\Anbu\Services\MenuBuilder;
@@ -14,16 +15,16 @@ class ProfilerController extends BaseController
      * @param  string $module
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function index($key = null, $module = 'dashboard')
+    public function index($key = null, $module = 'request')
     {
 //        try {
         $record = $this->repository->get($key);
-
         $this->hydrator->hydrate($record);
         $module = $this->purple->getModule($module);
         $data   = $this->buildViewData($record, $module);
         $data['uri'] = '';
-        $data['version'] = '';
+        $data['version'] = Application::VERSION;
+//        dd($data);
         return view('anbu.index', $data);
 //        } catch (Exception $exception) {
 //            throw new Exception($exception->getMessage());
@@ -60,7 +61,7 @@ class ProfilerController extends BaseController
             $data   = $module->getGlobal();
             $global = array_merge($data, $global);
         }
-        $global['menu'] = with(new MenuBuilder)->build($modules, $record->id);
+        $global['menu'] = with(new MenuBuilder)->build($modules, $record->getAttribute('id'));
         return $global;
     }
 

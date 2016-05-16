@@ -19,4 +19,6 @@ interface StorageInterface
 
     public function getStorage();
 
+    public function getData();
+
 }

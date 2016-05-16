@@ -29,16 +29,14 @@ class ModuleHydrator
      */
     public function hydrate(StorageInterface $storage)
     {
-        $modules = $storage->getStorage();
+        $modules = $storage->getData();
+
         foreach ($modules as $slug => $module) {
             $m = $this->purple->getModule($slug);
             // Set module data from storage.
-            $m->setData(isset($module['data']) ? $module['data'] : []);
-            $m->setGlobal(isset($module['global']) ? $module['global'] : []);
-            $m->setBadge(isset($module['badge']) ? $module['badge'] : []);
-//            $m->setData(array_get($module, 'data'));
-//            $m->setGlobal(array_get($module, 'global'));
-//            $m->setBadge(array_get($module, 'badge'));
+            $m->setData($module['data']);
+            $m->setGlobal($module['global']);
+            $m->setBadge($module['badge']);
         }
     }
 }
